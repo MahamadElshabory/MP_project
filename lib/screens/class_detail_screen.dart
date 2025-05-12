@@ -4,33 +4,24 @@ import '../models/class_model.dart';
 class ClassDetailScreen extends StatelessWidget {
   final ClassModel classModel;
 
-  const ClassDetailScreen({
-    Key? key,
-    required this.classModel,
-  }) : super(key: key);
+  const ClassDetailScreen({Key? key, required this.classModel})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final c = classModel;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(classModel.courseName),
-      ),
+      appBar: AppBar(title: Text(c.courseName)),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Room: ${classModel.room}',
-                style: Theme.of(context).textTheme.bodyLarge),
+            Text('Room: ${c.roomNumber}', style: Theme.of(context).textTheme.bodyLarge),
             const SizedBox(height: 8),
-            Text('Professor: ${classModel.professor}',
-                style: Theme.of(context).textTheme.bodyLarge),
+            Text('Professor: ${c.professor}', style: Theme.of(context).textTheme.bodyLarge),
             const SizedBox(height: 8),
-            Text('Day: ${classModel.day}',
-                style: Theme.of(context).textTheme.bodyLarge),
-            const SizedBox(height: 8),
-            Text('Time: ${classModel.startTime} - ${classModel.endTime}',
-                style: Theme.of(context).textTheme.bodyLarge),
+            Text('Materials: ${c.materials}', style: Theme.of(context).textTheme.bodyLarge),
           ],
         ),
       ),

@@ -1,11 +1,14 @@
+// lib/screens/create_group_screen.dart
+
 import 'package:flutter/material.dart';
-import '../db/database_helper.dart';
 import '../models/event_model.dart';
+import '../services/firebase_service.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   const CreateGroupScreen({Key? key}) : super(key: key);
+
   @override
-  _CreateGroupScreenState createState() => _CreateGroupScreenState();
+  State<CreateGroupScreen> createState() => _CreateGroupScreenState();
 }
 
 class _CreateGroupScreenState extends State<CreateGroupScreen> {
@@ -36,21 +39,23 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    await DatabaseHelper.instance.createEvent(
-                      EventModel(
-                        title: _title,
-                        description: _description,
-                        dateTime: _dateTime,
-                        category: 'study_group',
-                      ),
-                    );
-                    Navigator.pop(context);
-                  }
-                },
                 child: const Text('Create'),
+                onPressed: () async {
+                  if (!_formKey.currentState!.validate()) return;
+                  _formKey.currentState!.save();
+
+                  // 🚀 Post into Firebase Realtime Database
+                  await FirebaseService.instance.postGroup(
+                    EventModel(
+                      title: _title,
+                      description: _description,
+                      dateTime: _dateTime,
+                      category: 'study_group',
+                    ),
+                  );
+
+                  Navigator.pop(context);
+                },
               ),
             ],
           ),

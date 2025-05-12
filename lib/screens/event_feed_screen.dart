@@ -1,45 +1,27 @@
+// lib/screens/event_feed_screen.dart
+
 import 'package:flutter/material.dart';
-import '../db/database_helper.dart';
+import '../services/firebase_service.dart';
 import '../models/event_model.dart';
 import '../widgets/event_card.dart';
+import 'create_event_screen.dart';
 
-class EventFeedScreen extends StatefulWidget {
-  const EventFeedScreen({Key? key}) : super(key: key);
+class EventFeedScreen extends StatelessWidget {
+  final bool isTeacher;
 
-  @override
-  State<EventFeedScreen> createState() => _EventFeedScreenState();
-}
-
-class _EventFeedScreenState extends State<EventFeedScreen> {
-  late Future<List<EventModel>> _eventsFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadEvents();
-  }
-
-  void _loadEvents() {
-    setState(() {
-      _eventsFuture = DatabaseHelper.instance
-          .getAllEvents()
-          .then((all) =>
-          all.where((e) => e.category != 'study_group').toList());
-    });
-  }
-
-  Future<void> _toggleRSVP(EventModel event) async {
-    final updated = event.copyWith(isRSVP: !event.isRSVP);
-    await DatabaseHelper.instance.updateEvent(updated);
-    _loadEvents();
-  }
+  const EventFeedScreen({
+    Key? key,
+    required this.isTeacher,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final fb = FirebaseService.instance;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Campus Events')),
-      body: FutureBuilder<List<EventModel>>(
-        future: _eventsFuture,
+      body: StreamBuilder<List<EventModel>>(
+        stream: fb.eventsStream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -58,21 +40,39 @@ class _EventFeedScreenState extends State<EventFeedScreen> {
             itemCount: events.length,
             itemBuilder: (context, i) {
               final e = events[i];
-              final formattedDate =
-                  '${e.dateTime.toLocal().toString().substring(0, 16)}';
+              final formattedDate = e.dateTime
+                  .toLocal()
+                  .toString()
+                  .substring(0, 16);
               return EventCard(
                 title: e.title,
                 subtitle: formattedDate,
                 rsvped: e.isRSVP,
-                onRSVP: () => _toggleRSVP(e),
+                onRSVP: () =>
+                    fb.updateEventRSVP(e.firebaseKey!, !e.isRSVP),
                 onTap: () {
-                  // TODO: navigate to a detailed event page
+                  // TODO: navigate to a detailed event page if desired
                 },
               );
             },
           );
         },
       ),
+
+      // Only show the FAB to teachers
+      floatingActionButton: isTeacher
+          ? FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const CreateEventScreen(),
+            ),
+          );
+        },
+      )
+          : null,
     );
   }
 }
