@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../models/class_model.dart';
 
+const kBackgroundColor = Color(0xFF0A1931);
+const kCardColor       = Color(0xFF0F3057);
+const kAccentColor     = Color(0xFF1B4965);
+
 class ClassDetailScreen extends StatelessWidget {
   final ClassModel classModel;
 
@@ -11,18 +15,44 @@ class ClassDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = classModel;
     return Scaffold(
-      appBar: AppBar(title: Text(c.courseName)),
+      backgroundColor: kBackgroundColor,
+      appBar: AppBar(
+        title: Text(c.courseName),
+        backgroundColor: kBackgroundColor,
+        elevation: 0,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Room: ${c.roomNumber}', style: Theme.of(context).textTheme.bodyLarge),
-            const SizedBox(height: 8),
-            Text('Professor: ${c.professor}', style: Theme.of(context).textTheme.bodyLarge),
-            const SizedBox(height: 8),
-            Text('Materials: ${c.materials}', style: Theme.of(context).textTheme.bodyLarge),
+            _infoTile(icon: Icons.meeting_room, label: 'Room', value: c.roomNumber),
+            const SizedBox(height: 12),
+            _infoTile(icon: Icons.person,       label: 'Professor', value: c.professor),
+            const SizedBox(height: 12),
+            _infoTile(icon: Icons.link,         label: 'Materials', value: c.materials),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _infoTile({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Card(
+      color: kCardColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      child: ListTile(
+        leading: Icon(icon, color: kAccentColor),
+        title: Text(
+          '$label:',
+          style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          value.isNotEmpty ? value : '—',
+          style: const TextStyle(color: Colors.white),
         ),
       ),
     );

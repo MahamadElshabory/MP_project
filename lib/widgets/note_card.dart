@@ -1,26 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../models/note_model.dart';
+
+const kCardColor   = Color(0xFF355B73);
+const kAccentColor = Color(0xFF2196F3);
 
 class NoteCard extends StatelessWidget {
   final NoteModel note;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const NoteCard({
     Key? key,
     required this.note,
-    required this.onTap,
+    this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final formatted = DateFormat.yMMMd().add_jm().format(note.timestamp);
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      color: kCardColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        title: Text(note.title),
-        subtitle: Text(formatted),
         onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        leading: Icon(Icons.description, color: kAccentColor),
+        title: Text(
+          note.title,
+          style: const TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          note.timestamp.toLocal().toString().substring(0, 16),
+          style: const TextStyle(color: Colors.black54),
+        ),
+        trailing: const Icon(Icons.chevron_right, color: Colors.black38),
       ),
     );
   }

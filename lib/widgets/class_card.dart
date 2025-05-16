@@ -1,3 +1,5 @@
+// lib/widgets/class_card.dart
+
 import 'package:flutter/material.dart';
 
 class ClassCard extends StatelessWidget {

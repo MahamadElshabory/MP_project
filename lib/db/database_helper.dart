@@ -39,6 +39,7 @@ class DatabaseHelper {
         roomNumber  $textType,
         professor   $textType,
         materials   $textType
+        dateTime    $textType
       )
     ''');
 
@@ -48,6 +49,7 @@ class DatabaseHelper {
         id          $idType,
         title       $textType,
         description $textType,
+        dateTime    $textType,
         dateTime    $textType,
         category    $textType,
         isRSVP      INTEGER NOT NULL DEFAULT 0
